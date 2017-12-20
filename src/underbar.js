@@ -180,19 +180,35 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
-    if (accumulator !== undefined) {
-      var accum = accumulator
-      for (var i = 0; i < collection.length; i++) {
-        accum = iterator(accum, collection[i]);
+    if (Array.isArray(collection)) {
+      if (accumulator !== undefined) {
+        var accum = accumulator;
+        for (var i = 0; i < collection.length; i++) {
+          accum = iterator(accum, collection[i]);
+        }
       }
+      else {
+        var accum = collection[0];
+        for (var i = 1; i < collection.length; i++) {
+          accum = iterator(accum, collection[i]);
+        }
+      }
+      return accum;
     }
     else {
-      var accum = collection[0];
-      for (var i = 1; i < collection.length; i++) {
-        accum = iterator(accum, collection[i]);
+      if (accumulator !== undefined) {
+        var accum = accumulator;
+        for (var key in collection) {
+          accum = iterator(accum, collection[key]);
+        }
       }
+      else {
+        for (var key in collection) {
+          accum = iterator(accum, collection[key]);
+        }
+      }
+      return accum;
     }
-    return accum;
   };
 
   // Determine if the array or object contains a given value (using `===`).
@@ -211,6 +227,11 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    return _.reduce(collection, function(a, b) {
+      if (iterator !== undefined && a && iterator(b)) return true;
+      else if (iterator === undefined && a && b) return true;
+      else return false;
+    }, true);
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
