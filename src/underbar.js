@@ -368,6 +368,19 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var arrayCopy = array.slice();
+    function getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+    }
+    var result = [];
+    while (arrayCopy.length > 0) {
+      var index = getRandomInt(0, arrayCopy.length);
+      result.push(arrayCopy[index]);
+      arrayCopy.splice(index,1);
+    }
+    return result;
   };
 
 
